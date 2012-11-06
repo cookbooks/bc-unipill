@@ -1,0 +1,34 @@
+rails_env   = ENV['RAILS_ENV']  || "development"
+rails_root  = ENV['RAILS_ROOT'] || "/Developer/betterplace"
+bluepill_base = ((rails_env == 'development') ? File.join(rails_root, 'tmp', 'bluepill', 'var') : '/var/apps/betterplace/shared/bluepill/var')
+log_file = ((rails_env == 'development') ? File.join(rails_root, 'tmp', 'bluepill', 'log') : '/var/apps/betterplace/shared/bluepill/log')
+
+Bluepill.application("resque_scheduler", :log_file => "/#{log_file}/resque_scheduler.log", :base_dir => bluepill_base) do |app|
+  app.process("resque_scheduler") do |process|
+    process.working_dir = rails_root
+    process.group = "resque_scheduler"
+    process.start_command = "env BUNDLE_GEMFILE=#{rails_root}/Gemfile RAILS_ENV='#{rails_env}' bundle exec rake resque:preload_env resque:scheduler"
+    process.pid_file = "#{bluepill_base}/pids/resque-scheduler-1.pid"
+    process.daemonize = true
+    process.stop_command = <<-EOF
+      kill -QUIT {{PID}}
+      sleep_count=0
+      while [ -e /proc/{{PID}} ]; do
+        sleep 1
+        let "sleep_count+=1"
+        if [ $sleep_count -eq 60 ]; then
+          kill -TERM {{PID}}
+        fi
+        if [ $sleep_count -ge 70 ]; then
+          kill -KILL {{PID}}
+        fi
+      done
+      EOF
+    process.start_grace_time = 30.seconds
+    process.stop_grace_time = 75.seconds
+    process.restart_grace_time = 80.seconds
+    process.stdout = process.stderr = "#{rails_root}/log/resque_scheduler.log"
+
+    process.checks :mem_usage, :below => 100.megabytes, :every => 1.minute, :times => 3
+  end
+end
