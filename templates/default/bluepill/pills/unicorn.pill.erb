@@ -1,14 +1,9 @@
-rails_env   = ENV['RAILS_ENV']  || "development"
-rails_root  = ENV['RAILS_ROOT'] || "/Developer/betterplace"
-bluepill_base = ((rails_env == 'development') ? File.join(rails_root, 'tmp', 'bluepill', 'var') : '/var/apps/betterplace/shared/bluepill/var')
-log_file = ((rails_env == 'development') ? File.join(rails_root, 'tmp', 'bluepill', 'log') : '/var/apps/betterplace/shared/bluepill/log')
-
-Bluepill.application("unicorn", :log_file => "/#{log_file}/unicorn.log", :base_dir => File.join(bluepill_base)) do |app|
+Bluepill.application("unicorn", :log_file => "<%= @log_file %>", :base_dir => "<%= @shared_dir %>/bluepill/var") do |app|
   app.process("unicorn") do |process|
-    process.pid_file = File.join(bluepill_base, 'pids', 'unicorn', 'unicorn.pid')
-    process.working_dir = rails_root
+    process.pid_file = "<%= @pid_file %>"
+    process.working_dir = "<%= @rails_root %>"
 
-    process.start_command = "env BUNDLE_GEMFILE=#{rails_root}/Gemfile bundle exec unicorn -Dc #{rails_root}/config/unicorn.rb -E #{rails_env}"
+    process.start_command = "env BUNDLE_GEMFILE=<%= @rails_root %>/Gemfile bundle exec unicorn -Dc <%= @rails_root %>/config/unicorn.rb -E <%= @rails_env %>"
     process.stop_command = "kill -QUIT {{PID}}"
     process.restart_command = "kill -USR2 {{PID}}"
 
