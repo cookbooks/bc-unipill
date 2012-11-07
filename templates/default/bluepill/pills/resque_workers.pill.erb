@@ -1,17 +1,12 @@
-rails_env   = ENV['RAILS_ENV']  || "development"
-rails_root  = ENV['RAILS_ROOT'] || "/Developer/betterplace"
-bluepill_base = ((rails_env == 'development') ? File.join(rails_root, 'tmp', 'bluepill', 'var') : '/var/apps/betterplace/shared/bluepill/var')
-log_file = ((rails_env == 'development') ? File.join(rails_root, 'tmp', 'bluepill', 'log') : '/var/apps/betterplace/shared/bluepill/log')
-
-Bluepill.application("resque_workers", :log_file => "/#{log_file}/resque_workers.log", :base_dir => File.join(bluepill_base)) do |app|
+Bluepill.application("resque_workers", :log_file => "<%= @log_file %>", :base_dir => "<%= @bluepill_base %>") do |app|
   app.uid = "betterplace"
   app.gid = "betterplace"
   num_workers = 2
   num_workers.times do |num|
     app.process("resque_worker_#{num}") do |process|
-      process.working_dir = rails_root
+      process.working_dir = "<%= @rails_root %>"
       process.group = "resque_workers"
-      process.start_command = "env BUNDLE_GEMFILE=#{rails_root}/Gemfile RAILS_ENV='#{rails_env}' QUEUE=* bundle exec rake environment resque:work"
+      process.start_command = "env BUNDLE_GEMFILE=<%= @rails_root %>/Gemfile RAILS_ENV='<%= @rails_env %>' QUEUE=* bundle exec rake environment resque:work"
       process.stop_command = <<-EOF
       kill -QUIT {{PID}}
       sleep_count=0
@@ -29,9 +24,9 @@ EOF
       process.start_grace_time = 30.seconds
       process.stop_grace_time = 75.seconds
       process.restart_grace_time = 80.seconds
-      process.pid_file = "#{bluepill_base}/pids/resque-worker-#{num}.pid"
+      process.pid_file = "<%= @pid_file %>-#{num}.pid"
       process.daemonize = true
-      process.stdout = process.stderr = "#{rails_root}/log/resque_worker_#{num}.log"
+      process.stdout = process.stderr = "<%= rails_root %>/log/resque_worker_#{num}.log"
 
       process.checks :mem_usage, :below => 350.megabytes, :every => 1.minute, :times => 3
     end
