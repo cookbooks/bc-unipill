@@ -4,12 +4,24 @@ describe 'ruby_from_source::default' do
 
   include Helpers::Betterplace
 
-  it "should install the unicorn configuration in the shared folder"
+  it "should install the unicorn configuration in the shared folder" do
+    file('/var/apps/unipill/shared').must_exist
+  end
 
-  it "should create the bluepill directory"
+  it "should create the bluepill directory" do
+    file('/opt/local/bluepill/Gemfile').must_exist
+  end
 
-  it "should install the bluepill bundle"
+  it "should install the pills" do
+    file('/opt/local/bluepill/pills/unicorn.pill').must_exist
+  end
 
-  it "should install the bpill executable"
+  it "should install the bpill executable" do
+    file('/opt/local/bin/bpill').must_exist
+  end
+
+  it "should be possible to run bluepill" do
+    assert `/opt/local/bin/bpill` =~ /Usage: bluepill/
+  end
 
 end
