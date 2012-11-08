@@ -16,9 +16,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-unicorn_pid_folder = "#{node.unipill.shared}/pids/unicorn.pid"
+pid_folder = "#{node.unipill.shared}/pids"
 
-directory unicorn_pid_folder do
+directory pid_folder do
   owner node.unipill.user
   group node.unipill.group
   recursive true
@@ -35,12 +35,13 @@ end
   end
 end
 
-pid_file = "#{unicorn_pid_folder}/unicorn.pid"
+pid_file = "#{pid_folder}/unicorn.pid"
 
 template "#{node.unipill.shared}/config/unicorn.rb" do
   source 'unicorn.rb.erb'
   owner node.unipill.user
   group node.unipill.group
+  mode '0664'
   variables(
     :listen => { node.unipill.port => node.unipill.options, "'#{node.unipill.shared}/run/unicorn.socket'" => node.unipill.socket.options },
     :working_directory => node.unipill.rails_root,
