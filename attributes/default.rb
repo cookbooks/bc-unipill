@@ -1,10 +1,13 @@
 default.unipill.rails_root = '/var/apps/unipill/current'
+default.unipill.rails_env = 'production'
 default.unipill.shared = '/var/apps/unipill/shared'
 default.unipill.user = 'root'
 default.unipill.group = 'root'
 default.unipill.bin_root = '/opt/local'
 default.unipill.bluepill_root = '/opt/local/bluepill'
-default.unipill.ruby_path = '/opt/chef/embedded/bin'
+default.unipill.bin_paths = ["/opt/local/bin", '/opt/chef/embedded/bin']
+default.unipill.gem_paths = ["/opt/chef/embedded/lib/ruby/gems/1.9.1", "/opt/chef/embedded/lib/ruby/gems/1.9.1/@global"]
+default.unipill.ruby_version = '1.9.3'
 
 # Unicorn settings
 default.unipill.worker_timeout = 180

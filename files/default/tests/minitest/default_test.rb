@@ -21,7 +21,7 @@ describe 'ruby_from_source::default' do
   end
 
   it "should be possible to run bluepill" do
-    assert `/opt/local/bin/bpill` =~ /Usage: bluepill/
+    assert `/opt/local/bin/bpill --help` =~ /Usage: bluepill/
   end
 
 end
