@@ -31,7 +31,7 @@ service_restart)
   if test  -s "<%= @bluepill_base %>/pids/$2.pid"
   then
     echo "Service running, sending restart"
-    run "restart" $2
+    run $2 "restart"
   else
     echo "Service doesn't seem to run, loading pill"
     run "load" "pills/$2.pill"
