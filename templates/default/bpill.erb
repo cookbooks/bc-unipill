@@ -1,4 +1,11 @@
 #! /bin/bash
+
+# Small wrapper around unicorn. Standard is to run bluepill with our "normal" settings, but we have
+# a twist:
+#
+# Call bpill service_restart <service> to check if the service is running, and then either restart
+# it normally or load the pill to start it up for the first time
+
 export PATH=$PATH:<%= @bin_paths.join(':') %>
 export PATH=$PATH:<%= @gem_paths.map { |p| "#{p}/bin" }.join(':') %>
 # /opt/local/lib/ruby/gems/1.9.1/bin:/opt/local/lib/ruby/gems/1.9.1/@global/bin
@@ -15,4 +22,22 @@ export RUBY_HEAP_SLOTS_GROWTH_FACTOR=1.2
 export RUBY_GC_MALLOC_LIMIT=40000000
 export RUBY_HEAP_FREE_MIN=50000
 
-cd <%= @bluepill_path %> ; bundle exec bluepill $* --no-privileged -c <%= @bluepill_base %> -l <%= @bluepill_log %>
+run () {
+  cd <%= @bluepill_path %> ; bundle exec bluepill $* --no-privileged -c <%= @bluepill_base %> -l <%= @bluepill_log %>
+}
+
+case "$1" in
+service_restart)
+  if test  -s "<%= @bluepill_base %>/$2.pid"
+  then
+    echo "Service running, sending restart"
+    run "restart" $2
+  else
+    echo "Service doesn't seem to run, loading pill"
+    run "load" "pills/$2.pill"
+  fi
+  ;;
+*)
+  run $*
+  ;;
+esac
