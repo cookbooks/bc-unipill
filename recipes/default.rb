@@ -48,8 +48,8 @@ template "#{node.unipill.shared}/config/unicorn.rb" do
     :bundle_gemfile   => "#{node.unipill.rails_root}/Gemfile",
     :worker_timeout   =>   node.unipill.worker_timeout,
     :worker_processes =>   node.unipill.worker_processes,
-    :stderr_path      =>   "#{node.unipill.shared}/stderr.log",
-    :stdout_path      =>   "#{node.unipill.shared}/stdout.log",
+    :stderr_path      =>   "#{node.unipill.shared}/log/stderr.log",
+    :stdout_path      =>   "#{node.unipill.shared}/log/stdout.log",
     :pid              =>   pid_file
   )
 end
