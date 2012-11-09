@@ -28,7 +28,7 @@ run () {
 
 case "$1" in
 service_restart)
-  if test  -s "<%= @bluepill_base %>/$2.pid"
+  if test  -s "<%= @bluepill_base %>/pids/$2.pid"
   then
     echo "Service running, sending restart"
     run "restart" $2
