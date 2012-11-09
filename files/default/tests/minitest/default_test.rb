@@ -24,4 +24,8 @@ describe 'ruby_from_source::default' do
     assert `/opt/local/bin/bpill --help` =~ /Usage: bluepill/
   end
 
+  it "should install the process kill script" do
+    file('/opt/local/bin/process_killer').must_exist
+  end
+
 end

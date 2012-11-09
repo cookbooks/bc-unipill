@@ -85,7 +85,8 @@ end
               :rails_root => node.unipill.rails_root,
               :rails_env => node.unipill.rails_env,
               :log_file => "#{node.unipill.shared}/bluepill/log/#{pill_name}.log",
-              :pid_file => "#{node.unipill.shared}/pids/#{pill_name}.pid")
+              :pid_file => "#{node.unipill.shared}/pids/#{pill_name}.pid",
+              :bin_path => "#{node.unipill.bin_root}/bin")
   end
 end
 
@@ -112,4 +113,11 @@ template "#{node.unipill.bin_root}/bin/bpill" do
             :rails_env => node.unipill.rails_env,
             :rails_root => node.unipill.rails_root,
             :bluepill_path => node.unipill.bluepill_root
+end
+
+template "#{node.unipill.bin_root}/bin/process_killer" do
+  source 'process_killer.erb'
+  owner 'root'
+  group 'root'
+  mode '0755'
 end

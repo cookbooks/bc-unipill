@@ -7,20 +7,7 @@ Bluepill.application("resque_workers", :log_file => "<%= @log_file %>", :base_di
       process.working_dir = "<%= @rails_root %>"
       process.group = "resque_workers"
       process.start_command = "env BUNDLE_GEMFILE=<%= @rails_root %>/Gemfile RAILS_ENV='<%= @rails_env %>' QUEUE=* bundle exec rake environment resque:work"
-      process.stop_command = <<-EOF
-      kill -QUIT {{PID}}
-      sleep_count=0
-      while [ -e /proc/{{PID}} ]; do
-        sleep 1
-        let "sleep_count+=1"
-        if [ $sleep_count -eq 60 ]; then
-          kill -TERM {{PID}}
-        fi
-        if [ $sleep_count -ge 70 ]; then
-          kill -KILL {{PID}}
-        fi
-      done
-EOF
+      process.stop_command = "<%= @bin_path %>/process_killer {{{PID}}}"
       process.start_grace_time = 30.seconds
       process.stop_grace_time = 75.seconds
       process.restart_grace_time = 80.seconds
