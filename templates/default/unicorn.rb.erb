@@ -28,7 +28,7 @@ end
 
 # What to do before we fork a worker
 before_fork do |server, worker|
-  UnicornWorkderRestart.before_fork(server, worker)
+  UnicornWorkerRestart.before_fork(server, worker)
 
   # Before forking, kill the master process that belongs to the .oldbin PID.
   # This enables 0 downtime deploys.
