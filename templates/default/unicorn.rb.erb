@@ -49,7 +49,7 @@ end
 after_fork do |server, worker|
   # the following is *required* for Rails + "preload_app true",
   ActiveRecord::Base.establish_connection if defined?(ActiveRecord::Base)
-  Resque.redis.client.connect if defined?(Resque)
+  RedisPool::Pool.instance.reset_all
   # Reset the memcache-based object store
   Rails.cache.instance_variable_get(:@data).reset if defined?(Rails) && Rails.cache.instance_variable_get(:@data).respond_to?(:reset)
 end
