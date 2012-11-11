@@ -28,10 +28,7 @@ end
 
 # What to do before we fork a worker
 before_fork do |server, worker|
-  # the following is highly recomended for Rails + "preload_app true"
-  # as there's no need for the master process to hold a connection
-  ActiveRecord::Base.connection.disconnect! if defined?(ActiveRecord::Base)
-  Resque.redis.client.disconnect if defined?(Resque)
+  UnicornWorkderRestart.before_fork(server, worker)
 
   # Before forking, kill the master process that belongs to the .oldbin PID.
   # This enables 0 downtime deploys.
@@ -47,11 +44,7 @@ end
 
 # What to do after we fork a worker
 after_fork do |server, worker|
-  # the following is *required* for Rails + "preload_app true",
-  ActiveRecord::Base.establish_connection if defined?(ActiveRecord::Base)
-  RedisPool::Pool.instance.reset_all
-  # Reset the memcache-based object store
-  Rails.cache.instance_variable_get(:@data).reset if defined?(Rails) && Rails.cache.instance_variable_get(:@data).respond_to?(:reset)
+  UnicornWorkerRestart.after_fork(server, worker)
 end
 
 # Where to drop a pidfile
