@@ -17,6 +17,8 @@
 #
 
 pid_folder = "#{node.unipill.shared}/pids"
+garbage_collect_file = "#{node.unipill.bin_root}/bin/garbage_collect"
+env_file = "#{node.unipill.bin_root}/bin/ruby_env"
 
 directory pid_folder do
   owner node.unipill.user
@@ -86,7 +88,8 @@ end
               :rails_env => node.unipill.rails_env,
               :log_file => "#{node.unipill.shared}/bluepill/log/#{pill_name}.log",
               :pid_file => "#{node.unipill.shared}/pids/#{pill_name}.pid",
-              :bin_path => "#{node.unipill.bin_root}/bin")
+              :bin_path => "#{node.unipill.bin_root}/bin"),
+              :garbage_colect_settings => garbage_collect_file
   end
 end
 
@@ -100,29 +103,27 @@ directory "#{node.unipill.bin_root}/bin" do
   not_if "test -d \"#{node.unipill.bin_root}/bin\""
 end
 
-env_file = "#{node.unipill.bin_root}/bin/ruby_env"
-
-template env_file do
-  source 'bpill.erb'
+template garbage_collect_file do
+  source 'scripts/garbage_collect.erb'
   owner 'root'
   group 'root'
   mode '0644'
-  variables :bin_paths => node.unipill.bin_paths,
-            :gem_paths => node.unipill.gem_paths,
-            :ruby_version => node.unipill.ruby_version,
-            :rails_env => node.unipill.rails_env,
-            :rails_root => node.unipill.rails_root
 end
 
+
 template "#{node.unipill.bin_root}/bin/bpill" do
-  source 'bpill.erb'
+  source 'scripts/bpill.erb'
   owner 'root'
   group 'root'
   mode '0755'
   variables :bluepill_log => "#{node.unipill.shared}/bluepill/log/",
             :bluepill_base => "#{node.unipill.shared}/bluepill/var",
             :bluepill_path => node.unipill.bluepill_root,
-            :env_file => env_file
+            :bin_paths => node.unipill.bin_paths,
+            :gem_paths => node.unipill.gem_paths,
+            :ruby_version => node.unipill.ruby_version,
+            :rails_env => node.unipill.rails_env,
+            :rails_root => node.unipill.rails_root
 end
 
 template "#{node.unipill.bin_root}/bin/process_killer" do

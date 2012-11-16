@@ -28,4 +28,8 @@ describe 'ruby_from_source::default' do
     file('/opt/local/bin/process_killer').must_exist
   end
 
+  it "should install the garbage collector settings" do
+    file('/opt/local/bin/garbage_collect').must_exist
+  end
+
 end
