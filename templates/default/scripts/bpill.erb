@@ -1,0 +1,29 @@
+#! /bin/bash
+
+# Small wrapper around unicorn. Standard is to run bluepill with our "normal" settings, but we have
+# a twist:
+#
+# Call bpill service_restart <service> to check if the service is running, and then either restart
+# it normally or load the pill to start it up for the first time
+
+. <%= @env_file %>
+
+run () {
+  cd <%= @bluepill_path %> ; bundle exec bluepill $* --no-privileged -c <%= @bluepill_base %> -l <%= @bluepill_log %>
+}
+
+case "$1" in
+service_restart)
+  if test  -s "<%= @bluepill_base %>/pids/$2.pid"
+  then
+    echo "Service running, sending restart"
+    run $2 "restart"
+  else
+    echo "Service doesn't seem to run, loading pill"
+    run "load" "pills/$2.pill"
+  fi
+  ;;
+*)
+  run $*
+  ;;
+esac

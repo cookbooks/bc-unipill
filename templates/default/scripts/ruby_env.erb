@@ -1,0 +1,14 @@
+export PATH=$PATH:<%= @bin_paths.join(':') %>
+export PATH=$PATH:<%= @gem_paths.map { |p| "#{p}/bin" }.join(':') %>
+export RUBY_VERSION=<%= @ruby_version %>
+export GEM_HOME=<%= @gem_paths.first %>
+export GEM_PATH=<%= @gem_paths.join(':') %>
+export BUNDLE_PATH=<%= @gem_paths.first %>
+export RAILS_ENV=<%= @rails_env %>
+export RAILS_ROOT=<%= @rails_root %>
+
+export RUBY_HEAP_MIN_SLOTS=5000000
+export RUBY_HEAP_SLOTS_INCREMENT=300000
+export RUBY_HEAP_SLOTS_GROWTH_FACTOR=1.2
+export RUBY_GC_MALLOC_LIMIT=40000000
+export RUBY_HEAP_FREE_MIN=50000

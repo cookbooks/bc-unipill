@@ -100,6 +100,20 @@ directory "#{node.unipill.bin_root}/bin" do
   not_if "test -d \"#{node.unipill.bin_root}/bin\""
 end
 
+env_file = "#{node.unipill.bin_root}/bin/ruby_env"
+
+template env_file do
+  source 'bpill.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+  variables :bin_paths => node.unipill.bin_paths,
+            :gem_paths => node.unipill.gem_paths,
+            :ruby_version => node.unipill.ruby_version,
+            :rails_env => node.unipill.rails_env,
+            :rails_root => node.unipill.rails_root
+end
+
 template "#{node.unipill.bin_root}/bin/bpill" do
   source 'bpill.erb'
   owner 'root'
@@ -107,12 +121,8 @@ template "#{node.unipill.bin_root}/bin/bpill" do
   mode '0755'
   variables :bluepill_log => "#{node.unipill.shared}/bluepill/log/",
             :bluepill_base => "#{node.unipill.shared}/bluepill/var",
-            :bin_paths => node.unipill.bin_paths,
-            :gem_paths => node.unipill.gem_paths,
-            :ruby_version => node.unipill.ruby_version,
-            :rails_env => node.unipill.rails_env,
-            :rails_root => node.unipill.rails_root,
-            :bluepill_path => node.unipill.bluepill_root
+            :bluepill_path => node.unipill.bluepill_root,
+            :env_file => env_file
 end
 
 template "#{node.unipill.bin_root}/bin/process_killer" do
