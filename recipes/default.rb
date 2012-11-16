@@ -17,7 +17,6 @@
 #
 
 pid_folder = "#{node.unipill.shared}/pids"
-garbage_collect_file = "#{node.unipill.bin_root}/bin/garbage_collect"
 env_file = "#{node.unipill.bin_root}/bin/ruby_env"
 
 directory pid_folder do
@@ -89,7 +88,7 @@ end
               :log_file => "#{node.unipill.shared}/bluepill/log/#{pill_name}.log",
               :pid_file => "#{node.unipill.shared}/pids/#{pill_name}.pid",
               :bin_path => "#{node.unipill.bin_root}/bin"),
-              :garbage_colect_settings => garbage_collect_file
+              :garbage_colect_settings => node.unipill.garbage_colect_settings
   end
 end
 
@@ -102,14 +101,6 @@ directory "#{node.unipill.bin_root}/bin" do
   mode '0775'
   not_if "test -d \"#{node.unipill.bin_root}/bin\""
 end
-
-template garbage_collect_file do
-  source 'scripts/garbage_collect.erb'
-  owner 'root'
-  group 'root'
-  mode '0644'
-end
-
 
 template "#{node.unipill.bin_root}/bin/bpill" do
   source 'scripts/bpill.erb'

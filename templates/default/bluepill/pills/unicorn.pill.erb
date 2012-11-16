@@ -3,7 +3,7 @@ Bluepill.application("unicorn", :log_file => "<%= @log_file %>", :base_dir => "<
     process.pid_file = "<%= @pid_file %>"
     process.working_dir = "<%= @rails_root %>"
 
-    process.start_command = ". <%= @garbage_colect_settings %> ; env BUNDLE_GEMFILE=<%= @rails_root %>/Gemfile bundle exec unicorn -Dc <%= @rails_root %>/config/unicorn.rb -E <%= @rails_env %>"
+    process.start_command = "env <%= @garbage_colect_settings %> BUNDLE_GEMFILE=<%= @rails_root %>/Gemfile bundle exec unicorn -Dc <%= @rails_root %>/config/unicorn.rb -E <%= @rails_env %>"
     process.stop_command = "kill -QUIT {{PID}}"
     process.restart_command = "kill -USR2 {{PID}}"
 

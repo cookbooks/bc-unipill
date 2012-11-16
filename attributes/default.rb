@@ -8,6 +8,7 @@ default.unipill.bluepill_root = '/opt/local/bluepill'
 default.unipill.bin_paths = ["/opt/local/bin", '/opt/chef/embedded/bin']
 default.unipill.gem_paths = ["/opt/chef/embedded/lib/ruby/gems/1.9.1", "/opt/chef/embedded/lib/ruby/gems/1.9.1/@global"]
 default.unipill.ruby_version = '1.9.3'
+default.unipill.garbage_collect_settings = "RUBY_HEAP_MIN_SLOTS=5000000 RUBY_HEAP_SLOTS_INCREMENT=300000 RUBY_HEAP_SLOTS_GROWTH_FACTOR=1.2 RUBY_GC_MALLOC_LIMIT=40000000 RUBY_HEAP_FREE_MIN=50000"
 
 # Unicorn settings
 default.unipill.worker_timeout = 180
