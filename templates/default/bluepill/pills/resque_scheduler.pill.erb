@@ -11,6 +11,6 @@ Bluepill.application("resque_scheduler", :log_file => "<%= @log_file %>", :base_
     process.restart_grace_time = 80.seconds
     process.stdout = process.stderr = "<%= @rails_root %>/log/resque_scheduler.log"
 
-    process.checks :mem_usage, :below => 100.megabytes, :every => 1.minute, :times => 3
+    process.checks :mem_usage, :below => 300.megabytes, :every => 1.minute, :times => 3
   end
 end
