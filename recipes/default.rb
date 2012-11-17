@@ -88,7 +88,7 @@ end
               :log_file => "#{node.unipill.shared}/bluepill/log/#{pill_name}.log",
               :pid_file => "#{node.unipill.shared}/pids/#{pill_name}.pid",
               :bin_path => "#{node.unipill.bin_root}/bin",
-              :garbage_colect_settings => node.unipill.garbage_collect_settings)
+              :options => node.unipill.pill_options[pill_name])
   end
 end
 
